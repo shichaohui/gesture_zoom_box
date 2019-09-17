@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gesture_zoom_box/gesture_zoom_box.dart';
 
 class BigImagePage extends StatefulWidget {
-  final String imageUrl =
-      "https://www.thurrott.com/wp-content/uploads/sites/2/2019/05/flutter-mobile-web-desktop.jpg";
+  final String imageUrl = "images/img_1.jpg";
 
   const BigImagePage({Key key}) : super(key: key);
 
@@ -21,7 +20,7 @@ class _BigImagePageState extends State<BigImagePage> {
         maxScale: 5.0,
         doubleTapScale: 2.0,
         onPressed: () => Navigator.pop(context),
-        child: Image.network(widget.imageUrl),
+        child: Image.asset(widget.imageUrl),
       ),
     );
   }
