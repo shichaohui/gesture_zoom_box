@@ -63,8 +63,11 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
   // 双击缩放的点击位置
   Offset _doubleTapPosition;
 
-  bool isScaling = false;
-  bool isDragging = false;
+  bool _isScaling = false;
+  bool _isDragging = false;
+
+  // 拖动超出边界的最大值
+  double _maxDragOver = 100;
 
   @override
   void initState() {
@@ -131,10 +134,10 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
 
   /// 执行缩放
   _scaling(ScaleUpdateDetails details) {
-    if (isDragging) {
+    if (_isDragging) {
       return;
     }
-    isScaling = true;
+    _isScaling = true;
     if (_latestScaleUpdateDetails == null) {
       _latestScaleUpdateDetails = details;
       return;
@@ -169,23 +172,48 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
 
   /// 执行拖动
   _dragging(ScaleUpdateDetails details) {
-    if (isScaling) {
+    if (_isScaling) {
       return;
     }
-    isDragging = true;
-    if (_latestScaleUpdateDetails != null) {
-      _offset += Offset(
-        (details.localFocalPoint.dx - _latestScaleUpdateDetails.localFocalPoint.dx) * _scale,
-        (details.localFocalPoint.dy - _latestScaleUpdateDetails.localFocalPoint.dy) * _scale,
-      );
+    _isDragging = true;
+    if (_latestScaleUpdateDetails == null) {
+      _latestScaleUpdateDetails = details;
+      return;
     }
+
+    // 计算本次拖动增量
+    double offsetXIncrement =
+        (details.localFocalPoint.dx - _latestScaleUpdateDetails.localFocalPoint.dx) * _scale;
+    double offsetYIncrement =
+        (details.localFocalPoint.dy - _latestScaleUpdateDetails.localFocalPoint.dy) * _scale;
+    // 处理 X 轴边界
+    double scaleOffsetX = context.size.width * (_scale - 1.0) / 2;
+    if (scaleOffsetX <= 0) {
+      offsetXIncrement = 0;
+    } else if (_offset.dx > scaleOffsetX) {
+      offsetXIncrement *= (_maxDragOver - (_offset.dx - scaleOffsetX)) / _maxDragOver;
+    } else if (_offset.dx < -scaleOffsetX) {
+      offsetXIncrement *= (_maxDragOver - (-scaleOffsetX - _offset.dx)) / _maxDragOver;
+    }
+    // 处理 Y 轴边界
+    double scaleOffsetY = (context.size.height * _scale - MediaQuery.of(context).size.height) / 2;
+    if (scaleOffsetY <= 0) {
+      offsetYIncrement = 0;
+    } else if (_offset.dy > scaleOffsetY) {
+      offsetYIncrement *= (_maxDragOver - (_offset.dy - scaleOffsetY)) / _maxDragOver;
+    } else if (_offset.dy < -scaleOffsetY) {
+      offsetYIncrement *= (_maxDragOver - (-scaleOffsetY - _offset.dy)) / _maxDragOver;
+    }
+
+    _offset += Offset(offsetXIncrement, offsetYIncrement);
+
     _latestScaleUpdateDetails = details;
   }
 
   /// 缩放/拖动结束
   _onScaleEnd(ScaleEndDetails details) {
-    isScaling = false;
-    isDragging = false;
+    _isScaling = false;
+    _isDragging = false;
     _latestScaleUpdateDetails = null;
 
     if (_scale < 1.0) {
@@ -201,25 +229,25 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
     } else {
       // 处理拖动超过边界的情况（自动回弹到边界）
       double targetOffsetX = _offset.dx, targetOffsetY = _offset.dy;
-
+      // 处理 X 轴边界
       double scaleOffsetX = context.size.width * (_scale - 1.0) / 2;
-      if (_offset.dx > scaleOffsetX) {
+      if (scaleOffsetX <= 0) {
+        targetOffsetX = 0;
+      } else if (_offset.dx > scaleOffsetX) {
         targetOffsetX = scaleOffsetX;
       } else if (_offset.dx < -scaleOffsetX) {
         targetOffsetX = -scaleOffsetX;
       }
-
-      if (context.size.height * _scale <= MediaQuery.of(context).size.height) {
-        targetOffsetY = 0.0;
-      } else {
-        double scaleOffsetY =
-            ((context.size.height * _scale) - MediaQuery.of(context).size.height) / 2;
-        if (_offset.dy > scaleOffsetY) {
-          targetOffsetY = scaleOffsetY;
-        } else if (_offset.dy < -scaleOffsetY) {
-          targetOffsetY = -scaleOffsetY;
-        }
+      // 处理 Y 轴边界
+      double scaleOffsetY = (context.size.height * _scale - MediaQuery.of(context).size.height) / 2;
+      if (scaleOffsetY < 0) {
+        targetOffsetY = 0;
+      } else if (_offset.dy > scaleOffsetY) {
+        targetOffsetY = scaleOffsetY;
+      } else if (_offset.dy < -scaleOffsetY) {
+        targetOffsetY = -scaleOffsetY;
       }
+      // 回弹
       Offset targetOffset = Offset(targetOffsetX, targetOffsetY);
       if (_offset != targetOffset) {
         _animationOffset(targetOffset);
