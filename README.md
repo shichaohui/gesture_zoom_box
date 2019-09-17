@@ -1,5 +1,7 @@
 # GestureZoomBox
 
+[![pub](https://img.shields.io/pub/v/gesture_zoom_box.svg)](https://pub.dev/packages/gesture_zoom_box)
+
 A widget for gesture zoom.
 
 ## Usage
