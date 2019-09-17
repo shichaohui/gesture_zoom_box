@@ -24,6 +24,7 @@ class GestureZoomBox extends StatefulWidget {
   final double doubleTapScale;
   final Widget child;
   final VoidCallback onPressed;
+  final Duration duration;
 
   /// 通过最大缩放比例 [maxScale]、双击缩放比例 [doubleTapScale]、子部件 [child]、点击事件 [onPressed] 创建小部件
   const GestureZoomBox({
@@ -32,6 +33,7 @@ class GestureZoomBox extends StatefulWidget {
     this.doubleTapScale = 2.0,
     @required this.child,
     this.onPressed,
+    this.duration = const Duration(milliseconds: 200),
   })  : assert(maxScale >= 1.0),
         assert(doubleTapScale >= 1.0 && doubleTapScale <= maxScale),
         super(key: key);
@@ -228,7 +230,7 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
   /// 执行动画缩放内容到 [targetScale]
   _animationScale(double targetScale) {
     _scaleAnimController?.dispose();
-    _scaleAnimController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _scaleAnimController = AnimationController(vsync: this, duration: widget.duration);
     Animation anim = Tween<double>(begin: _scale, end: targetScale).animate(_scaleAnimController);
     anim.addListener(() {
       setState(() {
@@ -252,7 +254,7 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
   /// 执行动画偏移内容到 [targetOffset]
   _animationOffset(Offset targetOffset) {
     _offsetAnimController?.dispose();
-    _offsetAnimController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _offsetAnimController = AnimationController(vsync: this, duration: widget.duration);
     Animation anim =
         Tween<Offset>(begin: _offset, end: targetOffset).animate(_offsetAnimController);
     anim.addListener(() {
