@@ -4,6 +4,10 @@
 
 A widget for gesture zoom.
 
+| ![demo_big_image](./screenshots/demo_big_image.gif) |
+|:----:|
+| zoom image |
+
 ## Usage
 
 Add this to your package's pubspec.yaml file:
