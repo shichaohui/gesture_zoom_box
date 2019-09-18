@@ -9,7 +9,7 @@ A widget for gesture zoom.
 Add this to your package's pubspec.yaml file:
 ```dart
 dependencies:
-  gesture_zoom_box: ^0.0.1
+  gesture_zoom_box: ^0.0.2
 ```
 
 Used in your dart code:
@@ -21,10 +21,21 @@ import 'package:gesture_zoom_box/gesture_zoom_box.dart';
 GestureZoomBox(
     maxScale: 5.0,
     doubleTapScale: 2.0,
+    duration: Duration(milliseconds: 200),
     onPressed: () => Navigator.pop(context),
     child: Image.network(widget.imageUrl),
 )
 ```
+
+## Parameters
+
+| parameter | description |
+|----|----|
+| maxScale | The maximum zoom ratio. |
+| doubleTapScale | The zoom ratio for double-click.|
+| duration | The execution time of the animation, e.g fling & bounce. |
+| onPressed | The callback for click. |
+| child | The scalable content. |
 
 ## LICENSE
 
