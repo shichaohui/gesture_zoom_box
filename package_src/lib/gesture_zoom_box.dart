@@ -16,6 +16,8 @@
 
 library gesture_zoom_box;
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 /// 可缩放/平移的盒子小部件
@@ -119,6 +121,9 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
   _onScaleStart(ScaleStartDetails details) {
     _scaleAnimController?.stop();
     _offsetAnimController?.stop();
+    _isScaling = false;
+    _isDragging = false;
+    _latestScaleUpdateDetails = null;
   }
 
   /// 处理缩放变化 [details]
@@ -153,7 +158,7 @@ class _GestureZoomBoxState extends State<GestureZoomBox> with TickerProviderStat
     } else if (_scale > widget.maxScale && scaleIncrement > 0) {
       scaleIncrement *= (2.0 - (_scale - widget.maxScale));
     }
-    _scale += scaleIncrement;
+    _scale = max(_scale + scaleIncrement, 0.0);
 
     // 计算缩放后偏移前（缩放前后的内容中心对齐）的左上角坐标变化
     double scaleOffsetX = context.size.width * (_scale - 1.0) / 2;
