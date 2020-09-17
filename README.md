@@ -13,7 +13,7 @@ A widget for gesture zoom.
 Add this to your package's pubspec.yaml file:
 ```dart
 dependencies:
-  gesture_zoom_box: ^0.0.2
+  gesture_zoom_box: ^0.0.3
 ```
 
 Used in your dart code:
