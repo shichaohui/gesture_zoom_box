@@ -4,7 +4,7 @@ import 'package:gesture_zoom_box/gesture_zoom_box.dart';
 class BigImagePage extends StatefulWidget {
   final String imageUrl = "images/img_1.jpg";
 
-  const BigImagePage({Key key}) : super(key: key);
+  const BigImagePage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
