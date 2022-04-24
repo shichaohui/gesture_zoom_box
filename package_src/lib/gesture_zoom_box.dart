@@ -211,7 +211,8 @@ class _GestureZoomBoxState extends State<GestureZoomBox>
             latestScaleUpdateDetails.localFocalPoint.dy) *
         _scale;
     // 处理 X 轴边界
-    double scaleOffsetX = size.width * (_scale - 1.0) / 2;
+    double scaleOffsetX =
+        (size.width * _scale - MediaQuery.of(context).size.width) / 2;
     if (scaleOffsetX <= 0) {
       offsetXIncrement = 0;
     } else if (_offset.dx > scaleOffsetX) {
@@ -262,7 +263,8 @@ class _GestureZoomBoxState extends State<GestureZoomBox>
       double realScale = _scale > widget.maxScale ? widget.maxScale : _scale;
       double targetOffsetX = _offset.dx, targetOffsetY = _offset.dy;
       // 处理 X 轴边界
-      double scaleOffsetX = size.width * (realScale - 1.0) / 2;
+      double scaleOffsetX =
+          (size.width * realScale - MediaQuery.of(context).size.width) / 2;
       if (scaleOffsetX <= 0) {
         targetOffsetX = 0;
       } else if (_offset.dx > scaleOffsetX) {
