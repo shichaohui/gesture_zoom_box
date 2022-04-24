@@ -54,6 +54,9 @@ class _GestureZoomBoxState extends State<GestureZoomBox>
   // 偏移动画控制器
   AnimationController? _offsetAnimController;
 
+  // 首次缩放变化数据
+  ScaleUpdateDetails? _firstScaleUpdateDetails;
+
   // 上次缩放变化数据
   ScaleUpdateDetails? _latestScaleUpdateDetails;
 
@@ -124,11 +127,18 @@ class _GestureZoomBoxState extends State<GestureZoomBox>
     _offsetAnimController?.stop();
     _isScaling = false;
     _isDragging = false;
+    _firstScaleUpdateDetails = null;
     _latestScaleUpdateDetails = null;
   }
 
   /// 处理缩放变化 [details]
   _onScaleUpdate(ScaleUpdateDetails details) {
+    // 弃用首次事件，因为首次事件的 scale 经常为 1.0，会导致无法触发缩放
+    if (_firstScaleUpdateDetails == null) {
+      _firstScaleUpdateDetails = details;
+      return;
+    }
+    // 触发缩放/拖动
     setState(() {
       if (details.scale != 1.0) {
         _scaling(details);
