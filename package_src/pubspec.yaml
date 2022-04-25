@@ -1,7 +1,6 @@
 name: gesture_zoom_box
 description: A widget for gesture zoom.
-version: 0.0.3
-author: StoneHui <shichaohui1230@gmail.com>
+version: 0.0.4
 homepage: https://github.com/shichaohui/gesture_zoom_box
 
 environment:
